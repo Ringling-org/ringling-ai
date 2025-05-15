@@ -9,12 +9,12 @@ model = AutoModelForCausalLM.from_pretrained(LOCAL_MODEL_PATH, local_files_only=
 tokenizer = AutoTokenizer.from_pretrained(LOCAL_MODEL_PATH, local_files_only=True)
 
 
-def do_inference(url: str) -> str:
-    res = generate_summary_title(web_document=extract_document_from_url(url))
+def summarize_title(url: str) -> str:
+    res = do_summarize_title(web_document=extract_document_from_url(url))
     return extract_between_tags(res, "<|im_start|>assistant", "<|im_end|>")[0]
 
 
-def generate_summary_title(web_document: dict[str, str]) -> list:
+def do_summarize_title(web_document: dict[str, str]) -> list:
     chat = [
         {"role": "tool_list", "content": ""},
         {"role": "system", "content": (
@@ -36,7 +36,7 @@ def generate_summary_title(web_document: dict[str, str]) -> list:
             }, ensure_ascii=False)
         },
     ]
-    print({"role": "user", "content": {"title": web_document["title"], "content": web_document["content"]}})
+    print({"role": "user", "content": {"title": web_document["title"]}})
 
     inputs = tokenizer.apply_chat_template(chat, add_generation_prompt=True, return_dict=True, return_tensors="pt")
     output_ids = model.generate(**inputs, max_length=2048, stop_strings=["<|endofturn|>", "<|stop|>"],tokenizer=tokenizer)

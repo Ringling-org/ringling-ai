@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from api import infer
+from api import summary
 
 app = FastAPI()
 
@@ -13,7 +13,7 @@ def register_router(app: FastAPI, module):
 
     app.include_router(module.router, prefix=BASE_URL + module.ROUTE_PREFIX)
 
-register_router(app, infer)
+register_router(app, summary)
 
 if __name__ == "__main__":
     import uvicorn
